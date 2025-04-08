@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IBD RNA-Seq Analysis Platform</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+    <script src="https://cdn.jsdelivr.net/npm/plotly.js@2.18.0/dist/plotly.min.js"></script>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">IBD RNA-Seq Analysis Platform</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#home">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#gene-expression">Gene Expression</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#pathway-analysis">Pathway Analysis</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#model-comparison">Model Comparison</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#target-validation">Target Validation</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#about">About</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <!-- Home Section -->
+        <section id="home" class="mb-5">
+            <div class="row">
+                <div class="col-md-8">
+                    <h1>IBD RNA-Seq Analysis Platform</h1>
+                    <p class="lead">
+                        A comprehensive platform for analyzing bulk RNA-seq data from mouse models of inflammatory bowel disease (IBD) and human IBD samples.
+                    </p>
+                    <p>
+                        This platform allows researchers to compare gene expression patterns, pathway enrichment, and identify potential therapeutic targets across different mouse models and human IBD subtypes.
+                    </p>
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Mouse Models</h5>
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item">CD45RBHigh T cell transfer model</li>
+                                        <li class="list-group-item">Acute DSS model</li>
+                                        <li class="list-group-item">Chronic DSS model</li>
+                                        <li class="list-group-item">IL-10KO model</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Human IBD Data</h5>
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item">Ulcerative Colitis (UC)</li>
+                                        <li class="list-group-item">Crohn's Disease (CD)</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            Quick Analysis
+                        </div>
+                        <div class="card-body">
+                            <form>
+                                <div class="mb-3">
+                                    <label for="geneSearch" class="form-label">Search for a gene:</label>
+                                    <input type="text" class="form-control" id="geneSearch" placeholder="e.g., IL10, TNF, FOXP3">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="modelSelect" class="form-label">Select models to compare:</label>
+                                    <select class="form-select" id="modelSelect" multiple>
+                                        <option value="cd45rb">CD45RBHigh T cell transfer</option>
+                                        <option value="acute_dss">Acute DSS</option>
+                                        <option value="chronic_dss">Chronic DSS</option>
+                                        <option value="il10ko">IL-10KO</option>
+                                        <option value="human_uc">Human UC</option>
+                                        <option value="human_cd">Human CD</option>
+                                    </select>
+                                    <div class="form-text">Hold Ctrl/Cmd to select multiple models</div>
+                                </div>
+                                <button type="button" class="btn btn-primary" onclick="quickSearch()">Search</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Gene Expression Section -->
+        <section id="gene-expression" class="mb-5">
+            <h2>Gene Expression Analysis</h2>
+            <p>
+                Compare gene expression levels across different mouse models and human IBD samples.
+            </p>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Search Options</h5>
+                            <form>
+                                <div class="mb-3">
+                                    <label for="geneInput" class="form-label">Gene Symbol(s):</label>
+                                    <input type="text" class="form-control" id="geneInput" placeholder="Enter gene symbols (comma separated)">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Select Models:</label>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="cd45rb" id="cd45rbCheck" checked>
+                                        <label class="form-check-label" for="cd45rbCheck">
+                                            CD45RBHigh T cell transfer
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="acute_dss" id="acuteDssCheck" checked>
+                                        <label class="form-check-label" for="acuteDssCheck">
+                                            Acute DSS
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="chronic_dss" id="chronicDssCheck" checked>
+                                        <label class="form-check-label" for="chronicDssCheck">
+                                            Chronic DSS
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="il10ko" id="il10koCheck" checked>
+                                        <label class="form-check-label" for="il10koCheck">
+                                            IL-10KO
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="human_uc" id="humanUcCheck" checked>
+                                        <label class="form-check-label" for="humanUcCheck">
+                                            Human UC
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="human_cd" id="humanCdCheck" checked>
+                                        <label class="form-check-label" for="humanCdCheck">
+                                            Human CD
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="displayType" class="form-label">Display Type:</label>
+                                    <select class="form-select" id="displayType">
+                                        <option value="barplot">Bar Plot</option>
+                                        <option value="heatmap">Heatmap</option>
+                                        <option value="boxplot">Box Plot</option>
+                                    </select>
+                                </div>
+                                <button type="button" class="btn btn-primary" onclick="updateGeneExpression()">Update</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Expression Results</h5>
+                            <div id="expressionPlot" style="height: 500px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pathway Analysis Section -->
+        <section id="pathway-analysis" class="mb-5">
+            <h2>Pathway Analysis</h2>
+            <p>
+                Explore enriched biological pathways across different mouse models and human IBD samples.
+            </p>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Pathway Options</h5>
+                            <form>
+                                <div class="mb-3">
+                                    <label for="pathwaySelect" class="form-label">Select Pathway:</label>
+                                    <select class="form-select" id="pathwaySelect">
+                                        <option value="inflammatory_response">Inflammatory response</option>
+                                        <option value="cytokine_signaling">Cytokine signaling</option>
+                                        <option value="t_cell_activation">T cell activation</option>
+                                        <option value="b_cell_receptor">B cell receptor signaling</option>
+                                        <option value="nfkb_signaling">NF-kB signaling</option>
+                                        <option value="tnf_signaling">TNF signaling</option>
+                                        <option value="il17_signaling">IL-17 signaling</option>
+                                        <option value="tlr_signaling">Toll-like receptor signaling</option>
+                                        <option value="jak_stat_signaling">JAK-STAT signaling</option>
+                                        <option value="mapk_signaling">MAPK signaling</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Select Models:</label>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="cd45rb" id="cd45rbPathwayCheck" checked>
+                                        <label class="form-check-label" for="cd45rbPathwayCheck">
+                                            CD45RBHigh T cell transfer
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="acute_dss" id="acuteDssPathwayCheck" checked>
+                                        <label class="form-check-label" for="acuteDssPathwayCheck">
+                                            Acute DSS
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="chronic_dss" id="chronicDssPathwayCheck" checked>
+                                        <label class="form-check-label" for="chronicDssPathwayCheck">
+                                            Chronic DSS
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="il10ko" id="il10koPathwayCheck" checked>
+                                        <label class="form-check-label" for="il10koPathwayCheck">
+                                            IL-10KO
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="human_uc" id="humanUcPathwayCheck" checked>
+                                        <label class="form-check-label" for="humanUcPathwayCheck">
+                                            Human UC
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="human_cd" id="humanCdPathwayCheck" checked>
+                                        <label class="form-check-label" for="humanCdPathwayCheck">
+                                            Human CD
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="pathwayDisplayType" class="form-label">Display Type:</label>
+                                    <select class="form-select" id="pathwayDisplayType">
+                              
+(Content truncated due to size limit. Use line ranges to read in chunks)
