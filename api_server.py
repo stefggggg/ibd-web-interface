@@ -13,7 +13,7 @@ from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 
 # Define base directories
-BASE_DIR = Path('/home/ubuntu/rna_seq_interface')
+BASE_DIR = Path(__file__).resolve().parent
 DATA_DIR = BASE_DIR / 'data'
 ANALYSIS_DIR = BASE_DIR / 'analysis'
 WEB_DIR = BASE_DIR / 'web'
